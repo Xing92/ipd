@@ -8,6 +8,7 @@ public class Neuron {
 
 	private List<Double> inputs = new ArrayList<Double>();
 	private List<Double> weights = new ArrayList<Double>();
+	private double learningFactor = 0.00001;
 
 	public Neuron(int size) {
 		for (int index = 0; index < size; index++) {
@@ -38,16 +39,18 @@ public class Neuron {
 		return result;
 	}
 
-	public void calculateAndAdjustWeights(List<Double> realValues, double realResult, double guessedResult) {
+	public void train(List<Double> realValues, double realResult, double guessedResult) {
 		System.out
 				.println("RealValues=" + realValues + ", realResult=" + realResult + ", guessedResult=" + guessedResult);
-
+		
+		for(int i=0; i < weights.size(); i++) {
+			double w = weights.get(i);
+			double x = realValues.get(i);
+			weights.set(i, w + learningFactor * 2 * (realResult - guessedResult) * x);
+		}
+		System.out.println("Weights=" + weights);
 	}
 	
-	private double calculateDelta(double realValue, double realResult, double guessedResult) {
-		
-		return 0; // TODO: write this function
-	}
 
 	@Override
 	public String toString() {

@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -48,9 +49,11 @@ public class App extends Application {
 
 		Line coord1 = new Line(SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT);
 		Line coord2 = new Line(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+		Line perfect = new Line(0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
 		root.getChildren().add(coord1);
 		root.getChildren().add(coord2);
-
+		root.getChildren().add(perfect);
+		
 		line = new Line(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
 		line.setStroke(Color.BLUE);
 		line.setStrokeWidth(3);
@@ -58,41 +61,49 @@ public class App extends Application {
 		stage.setScene(scene);
 		stage.show();
 
-		generatePointsButton.setOnAction(ae -> {
+		generatePointsButton.setOnAction(createGeneratePointsListener());
+		runOneEpochButton.setOnAction(createRunOneEpochListener());
+
+	}
+
+	private EventHandler createGeneratePointsListener() {
+		return ae -> {
 			System.out.println("Clicked");
-			points.addAll(Point.generatePoints(10));
+			points.addAll(Point.generatePoints(1, true));
 			root.getChildren().addAll(points.stream().filter(point -> !root.getChildren().contains(point.getCircle()))
 					.map(point -> point.getCircle()).collect(Collectors.toList()));
-		});
+		};
+	}
 
-		runOneEpochButton.setOnAction(ae -> {
+	private EventHandler createRunOneEpochListener() {
+		return ae -> {
 			if (neuron == null) {
 				neuron = new Neuron(2);
 				System.out.println("Creating new Neuron: " + neuron);
 			}
-			double guessedValue = 0;
+			double guessedValue = 0; // TODO: guessed value, broken after getting it into method
 			for (Point point : points) {
-				neuron.addInput(point.x);
-				neuron.addInput(point.y);
-				System.out.println("For Point: [" + point.x + " ; " + point.y + "]");
-				guessedValue = neuron.calculate();
-				System.out.println("Calculated: [" + guessedValue + "]");
-				List<Double> pointCoords = new ArrayList();
-				pointCoords.add(point.x);
-				pointCoords.add(point.y);
-				neuron.calculateAndAdjustWeights(pointCoords, realPointTangent(point), guessedValue);
+				guessedValue = oneIteration(point);
+				line.setRotate(-guessedValue); // TODO: Rotation according to calculation
+				neuron.train(point.getCoords(), realPointTangent(point), guessedValue);
 			}
+		};
+	}
 
-			line.setRotate(guessedValue); // TODO: Rotation according to calculation
-
-		});
-
+	private double oneIteration(Point point) {
+		neuron.addInput(point.x);
+		neuron.addInput(point.y);
+		System.out.println("For Point: [" + point.x + " ; " + point.y + "]");
+		double guessedValue = 0; // TODO: Fix guessed number after getting it into this method
+		guessedValue = neuron.calculate();
+		System.out.println("Calculated: [" + guessedValue + "]");
+		return guessedValue;
 	}
 
 	private double realPointTangent(Point point) {
 		double x = point.x;
 		double y = point.y;
-		double result = Math.atan(y / x);
+		double result = Math.tan(y / x) * 180 / (2 * Math.PI); //TODO: I think there is some issue
 
 		return result;
 	}

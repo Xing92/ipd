@@ -26,15 +26,30 @@ public class Point {
 		return circle;
 	}
 
-	public static List<Point> generatePoints(int amount) {
-		List<Point> nodes = new ArrayList<>();
+	public List<Double> getCoords() {
+		List<Double> pointCoords = new ArrayList();
+		pointCoords.add(x);
+		pointCoords.add(y);
+		return pointCoords;
+	}
+
+	public static List<Point> generatePoints(int amount, boolean perfect) {
+		List<Point> points = new ArrayList<>();
 		Random r = new Random();
-		for (int i = 0; i < amount; i++) {
-			double x = -App.SCREEN_WIDTH / 2 + App.SCREEN_WIDTH * r.nextDouble();
-			double y = (x - 20) + ((x + 20) - (x - 20)) * r.nextDouble();
-			Point point = new Point(x, y);
-			nodes.add(point);
+		if (perfect) {
+			for (int i = 0; i < amount; i++) {
+				double xy = App.SCREEN_WIDTH * r.nextDouble() - App.SCREEN_WIDTH / 2;
+				Point point = new Point(xy, xy);
+				points.add(point);
+			}
+		} else {
+			for (int i = 0; i < amount; i++) {
+				double x = -App.SCREEN_WIDTH / 2 + App.SCREEN_WIDTH * r.nextDouble();
+				double y = (x - 20) + ((x + 20) - (x - 20)) * r.nextDouble();
+				Point point = new Point(x, y);
+				points.add(point);
+			}
 		}
-		return nodes;
+		return points;
 	}
 }
