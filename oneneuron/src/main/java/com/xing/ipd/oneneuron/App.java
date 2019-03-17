@@ -1,6 +1,7 @@
 package com.xing.ipd.oneneuron;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
@@ -18,8 +20,8 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
 
-	private static final double SCREEN_HEIGHT = 450;
-	private static final double SCREEN_WIDTH = 450;
+	public static final double SCREEN_HEIGHT = 450;
+	public static final double SCREEN_WIDTH = 450;
 	private static List<Point> points = new ArrayList();
 	private static Line line;
 	private static Neuron neuron;
@@ -41,63 +43,58 @@ public class App extends Application {
 		runOneEpochButton = new Button();
 		runOneEpochButton.setText("Run Epoch");
 		runOneEpochButton.setLayoutX(150);
-
 		root.getChildren().add(generatePointsButton);
 		root.getChildren().add(runOneEpochButton);
+
+		Line coord1 = new Line(SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT);
+		Line coord2 = new Line(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+		root.getChildren().add(coord1);
+		root.getChildren().add(coord2);
+
+		line = new Line(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+		line.setStroke(Color.BLUE);
+		line.setStrokeWidth(3);
+		root.getChildren().add(line);
 		stage.setScene(scene);
 		stage.show();
 
 		generatePointsButton.setOnAction(ae -> {
 			System.out.println("Clicked");
-			points.addAll(generatePoints(100));
+			points.addAll(Point.generatePoints(10));
 			root.getChildren().addAll(points.stream().filter(point -> !root.getChildren().contains(point.getCircle()))
 					.map(point -> point.getCircle()).collect(Collectors.toList()));
 		});
 
 		runOneEpochButton.setOnAction(ae -> {
-			if(neuron == null) {
+			if (neuron == null) {
 				neuron = new Neuron(2);
 				System.out.println("Creating new Neuron: " + neuron);
 			}
-			root.getChildren().remove(line);
-			
+			double guessedValue = 0;
+			for (Point point : points) {
+				neuron.addInput(point.x);
+				neuron.addInput(point.y);
+				System.out.println("For Point: [" + point.x + " ; " + point.y + "]");
+				guessedValue = neuron.calculate();
+				System.out.println("Calculated: [" + guessedValue + "]");
+				List<Double> pointCoords = new ArrayList();
+				pointCoords.add(point.x);
+				pointCoords.add(point.y);
+				neuron.calculateAndAdjustWeights(pointCoords, realPointTangent(point), guessedValue);
+			}
+
+			line.setRotate(guessedValue); // TODO: Rotation according to calculation
+
 		});
 
 	}
 
-	private List<Point> generatePoints(int amount) {
-		List<Point> nodes = new ArrayList<>();
-		Random r = new Random();
-		for (int i = 0; i < amount; i++) {
-			double x = 10 + (SCREEN_WIDTH - 10) * r.nextDouble();
-			double y = (x - 20) + ((x + 20) - (x - 20)) * r.nextDouble();
-			Point point = new Point(x, y);
-			nodes.add(point);
-		}
-		return nodes;
-	}
+	private double realPointTangent(Point point) {
+		double x = point.x;
+		double y = point.y;
+		double result = Math.atan(y / x);
 
-	private static void test() {
-		System.out.println("Hello World!");
-
-		Neuron n1 = new Neuron(5);
-		Neuron n2 = new Neuron(3);
-
-		System.out.println(n1);
-		n1.addInput(3);
-		n1.addInput(5);
-		n1.addInput(3);
-		n1.addInput(3);
-		n1.addInput(5);
-		System.out.println(n1.calculate());
-		System.out.println("=====");
-		n2.addInput(3);
-		n2.addInput(5);
-		n2.addInput(3);
-		System.out.println(n2);
-		System.out.println(n2.calculate());
-
-		System.out.println("Good bye World...");
+		return result;
 	}
 
 }
