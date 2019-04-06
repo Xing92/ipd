@@ -2,6 +2,7 @@ package com.xing.ipd.oneneuron;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class App extends Application {
 		root.getChildren().add(coord1);
 		root.getChildren().add(coord2);
 		root.getChildren().add(perfect);
-		
+
 		line = new Line(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
 		line.setStroke(Color.BLUE);
 		line.setStrokeWidth(3);
@@ -68,8 +69,8 @@ public class App extends Application {
 
 	private EventHandler createGeneratePointsListener() {
 		return ae -> {
-			System.out.println("Clicked");
-			points.addAll(Point.generatePoints(1, true));
+			points.addAll(Point.generatePoints(1, false));
+			// points.addAll(Point.generatePositivePoints(1, true));
 			root.getChildren().addAll(points.stream().filter(point -> !root.getChildren().contains(point.getCircle()))
 					.map(point -> point.getCircle()).collect(Collectors.toList()));
 		};
@@ -81,12 +82,17 @@ public class App extends Application {
 				neuron = new Neuron(2);
 				System.out.println("Creating new Neuron: " + neuron);
 			}
-			double guessedValue = 0; // TODO: guessed value, broken after getting it into method
+			System.out.println("=====Start=====");
+			double guessedValue = 0;
+			Collections.shuffle(points);
+			// for (int i = 0; i < 100; i++) { //TODO: for multiple epochs
 			for (Point point : points) {
 				guessedValue = oneIteration(point);
-				line.setRotate(-guessedValue); // TODO: Rotation according to calculation
-				neuron.train(point.getCoords(), realPointTangent(point), guessedValue);
+				line.setRotate(-angleFromA(guessedValue));
+				neuron.train(point.getCoords(), realResult(point), guessedValue);
 			}
+			// }
+			System.out.println("=====Finish=====");
 		};
 	}
 
@@ -94,16 +100,31 @@ public class App extends Application {
 		neuron.addInput(point.x);
 		neuron.addInput(point.y);
 		System.out.println("For Point: [" + point.x + " ; " + point.y + "]");
-		double guessedValue = 0; // TODO: Fix guessed number after getting it into this method
+		double guessedValue = 0;
 		guessedValue = neuron.calculate();
 		System.out.println("Calculated: [" + guessedValue + "]");
 		return guessedValue;
 	}
 
-	private double realPointTangent(Point point) {
+	private double angleFromA(double a) {
+		double result = Math.atan(a) * (180 / Math.PI);
+		return result;
+	}
+
+	private double realPointTangent(Point point) { 
 		double x = point.x;
 		double y = point.y;
-		double result = Math.tan(y / x) * 180 / (2 * Math.PI); //TODO: I think there is some issue
+
+		double result = Math.atan(y / x) * (180 / Math.PI);
+
+		return result;
+	}
+
+	private double realResult(Point point) { 
+		double x = point.x;
+		double y = point.y;
+
+		double result = y / x;
 
 		return result;
 	}

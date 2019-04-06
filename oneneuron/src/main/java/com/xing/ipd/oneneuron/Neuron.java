@@ -8,7 +8,9 @@ public class Neuron {
 
 	private List<Double> inputs = new ArrayList<Double>();
 	private List<Double> weights = new ArrayList<Double>();
-	private double learningFactor = 0.00001;
+
+
+	private double learningFactor = 0.000_01;
 
 	public Neuron(int size) {
 		for (int index = 0; index < size; index++) {
@@ -16,6 +18,10 @@ public class Neuron {
 		}
 	}
 
+	public List<Double> getWeights() {
+		return weights;
+	}
+	
 	public void addInput(double input) {
 		inputs.add(input);
 	}
@@ -33,7 +39,7 @@ public class Neuron {
 	public double calculate() {
 		double result = 0;
 		for (int index = 0; index < inputs.size(); index++) {
-			result += weights.get(index) * inputs.get(0);
+			result += weights.get(index) * inputs.get(index);
 		}
 		clearInputs();
 		return result;
@@ -46,7 +52,7 @@ public class Neuron {
 		for(int i=0; i < weights.size(); i++) {
 			double w = weights.get(i);
 			double x = realValues.get(i);
-			weights.set(i, w + learningFactor * 2 * (realResult - guessedResult) * x);
+			weights.set(i, w + learningFactor * (realResult - guessedResult) * x);
 		}
 		System.out.println("Weights=" + weights);
 	}
