@@ -51,10 +51,10 @@ public class App extends Application {
 
 		Line coord1 = new Line(SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2, SCREEN_HEIGHT);
 		Line coord2 = new Line(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-		Line perfect = new Line(0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
+//		Line perfect = new Line(0, SCREEN_HEIGHT, SCREEN_WIDTH, 0);
 		root.getChildren().add(coord1);
 		root.getChildren().add(coord2);
-		root.getChildren().add(perfect);
+//		root.getChildren().add(perfect);
 
 		stage.setScene(scene);
 		stage.show();
