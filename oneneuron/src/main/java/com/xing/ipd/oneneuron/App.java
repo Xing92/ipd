@@ -12,6 +12,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
@@ -55,22 +56,27 @@ public class App extends Application {
 		root.getChildren().add(coord2);
 		root.getChildren().add(perfect);
 
-		line = new Line(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
-		line.setStroke(Color.BLUE);
-		line.setStrokeWidth(3);
-		root.getChildren().add(line);
 		stage.setScene(scene);
 		stage.show();
 
+		scene.setOnMouseClicked(createGeneratePointOnMouseClickListener());
 		generatePointsButton.setOnAction(createGeneratePointsListener());
 		runOneEpochButton.setOnAction(createRunOneEpochListener());
 
 	}
 
+	private EventHandler createGeneratePointOnMouseClickListener() {
+		return e -> {
+			MouseEvent me = (MouseEvent) e;
+			Point point = Point.generatePointForGlobalCoord(me.getX(), me.getY());
+			points.add(point);
+			root.getChildren().add(point.getCircle());
+		};
+	}
+	
 	private EventHandler createGeneratePointsListener() {
 		return ae -> {
 			points.addAll(Point.generatePoints(1, false));
-			// points.addAll(Point.generatePositivePoints(1, true));
 			root.getChildren().addAll(points.stream().filter(point -> !root.getChildren().contains(point.getCircle()))
 					.map(point -> point.getCircle()).collect(Collectors.toList()));
 		};
@@ -79,54 +85,49 @@ public class App extends Application {
 	private EventHandler createRunOneEpochListener() {
 		return ae -> {
 			if (neuron == null) {
-				neuron = new Neuron(2);
+				neuron = new Neuron(1);
 				System.out.println("Creating new Neuron: " + neuron);
 			}
-			System.out.println("=====Start=====");
 			double guessedValue = 0;
 			Collections.shuffle(points);
-			// for (int i = 0; i < 100; i++) { //TODO: for multiple epochs
-			for (Point point : points) {
-				guessedValue = oneIteration(point);
-				line.setRotate(-angleFromA(guessedValue));
-				neuron.train(point.getCoords(), realResult(point), guessedValue);
+			for (int i = 0; i < 100; i++) { // TODO: for multiple epochs
+				for (Point point : points) {
+					guessedValue = oneIteration(point);
+					// line.setRotate(-angleFromA(guessedValue));
+					neuron.train(point.getX(), point.getY(), guessedValue);
+				}
 			}
-			// }
-			System.out.println("=====Finish=====");
+			drawLine();
 		};
 	}
 
 	private double oneIteration(Point point) {
 		neuron.addInput(point.x);
-		neuron.addInput(point.y);
-		System.out.println("For Point: [" + point.x + " ; " + point.y + "]");
 		double guessedValue = 0;
 		guessedValue = neuron.calculate();
-		System.out.println("Calculated: [" + guessedValue + "]");
 		return guessedValue;
 	}
 
-	private double angleFromA(double a) {
-		double result = Math.atan(a) * (180 / Math.PI);
-		return result;
-	}
+	private void drawLine() {
+		if (line == null) {
+			line = new Line();
+			root.getChildren().add(line);
+		}
+		double x1 = SCREEN_WIDTH / 2;
+		neuron.addInput(x1);
+		double y1 = neuron.calculate();
 
-	private double realPointTangent(Point point) { 
-		double x = point.x;
-		double y = point.y;
+		double x2 = - SCREEN_WIDTH / 2;
+		neuron.addInput(x2);
+		double y2 = neuron.calculate();
 
-		double result = Math.atan(y / x) * (180 / Math.PI);
+		line.setStartX(x1 + App.SCREEN_WIDTH / 2);
+		line.setStartY(-y1 + App.SCREEN_HEIGHT / 2);
+		line.setEndX(x2 + App.SCREEN_WIDTH / 2);
+		line.setEndY(-y2 + App.SCREEN_HEIGHT / 2);
 
-		return result;
-	}
-
-	private double realResult(Point point) { 
-		double x = point.x;
-		double y = point.y;
-
-		double result = y / x;
-
-		return result;
+		line.setStroke(Color.BLUE);
+		line.setStrokeWidth(3);
 	}
 
 }

@@ -33,6 +33,14 @@ public class Point {
 		return pointCoords;
 	}
 
+	public double getX() {
+		return x;
+	}
+
+	public double getY() {
+		return y;
+	}
+
 	public static List<Point> generatePoints(int amount, boolean perfect) {
 		List<Point> points = new ArrayList<>();
 		Random r = new Random();
@@ -52,7 +60,7 @@ public class Point {
 		}
 		return points;
 	}
-	
+
 	public static List<Point> generatePositivePoints(int amount, boolean perfect) {
 		List<Point> points = new ArrayList<>();
 		Random r = new Random();
@@ -71,5 +79,9 @@ public class Point {
 			}
 		}
 		return points;
+	}
+
+	public static Point generatePointForGlobalCoord(double x, double y) {
+		return new Point(x - App.SCREEN_WIDTH / 2, -y + App.SCREEN_HEIGHT / 2);
 	}
 }

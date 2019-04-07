@@ -9,7 +9,6 @@ public class Neuron {
 	private List<Double> inputs = new ArrayList<Double>();
 	private List<Double> weights = new ArrayList<Double>();
 
-
 	private double learningFactor = 0.000_01;
 
 	public Neuron(int size) {
@@ -21,7 +20,7 @@ public class Neuron {
 	public List<Double> getWeights() {
 		return weights;
 	}
-	
+
 	public void addInput(double input) {
 		inputs.add(input);
 	}
@@ -45,18 +44,23 @@ public class Neuron {
 		return result;
 	}
 
-	public void train(List<Double> realValues, double realResult, double guessedResult) {
-		System.out
-				.println("RealValues=" + realValues + ", realResult=" + realResult + ", guessedResult=" + guessedResult);
-		
-		for(int i=0; i < weights.size(); i++) {
+	public void train(Double input, double realResult, double guessedResult) {
+		List<Double> inputs = new ArrayList<>();
+		inputs.add(input);
+		train(inputs, realResult, guessedResult);
+	}
+
+	public void train(List<Double> realValuinputses, double realResult, double guessedResult) {
+		// System.out.println("RealValues=" + realValuinputses + ", realResult=" +
+		// realResult + ", guessedResult=" + guessedResult);
+
+		for (int i = 0; i < weights.size(); i++) {
 			double w = weights.get(i);
-			double x = realValues.get(i);
+			double x = realValuinputses.get(i);
 			weights.set(i, w + learningFactor * (realResult - guessedResult) * x);
 		}
-		System.out.println("Weights=" + weights);
+		// System.out.println("Weights=" + weights);
 	}
-	
 
 	@Override
 	public String toString() {
