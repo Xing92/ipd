@@ -14,7 +14,7 @@ public class Neuron {
 		this.sign = sign;
 		int numberOfOnes = weights.stream().filter(weight -> weight == 1).collect(Collectors.toList()).size();
 		weights.stream().forEach(weight -> {
-			this.weights.add(weight / Math.sqrt(numberOfOnes));
+			this.weights.add(weight / Math.sqrt((double)numberOfOnes)); // Question : should I do Math.sqrt() there?
 		});
 	}
 

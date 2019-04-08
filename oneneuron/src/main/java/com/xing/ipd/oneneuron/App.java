@@ -90,13 +90,13 @@ public class App extends Application {
 			}
 			double guessedValue = 0;
 			Collections.shuffle(points);
-			for (int i = 0; i < 100; i++) { // TODO: for multiple epochs
+//			for (int i = 0; i < 100; i++) { // TODO: for multiple epochs
 				for (Point point : points) {
 					guessedValue = oneIteration(point);
 					// line.setRotate(-angleFromA(guessedValue));
 					neuron.train(point.getX(), point.getY(), guessedValue);
 				}
-			}
+//			}
 			drawLine();
 		};
 	}

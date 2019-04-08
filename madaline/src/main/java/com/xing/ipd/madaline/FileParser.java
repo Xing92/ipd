@@ -1,8 +1,10 @@
 package com.xing.ipd.madaline;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,11 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class FileParser {
 
 	private static final Pattern letterSignPattern = Pattern.compile("^(\\w{1})$"); // TODO: change names
-	private static final Pattern letterPattern = Pattern.compile("^([01]{4})$"); // TODO: change names
+	private static final Pattern letterPattern = Pattern.compile("^([01]+)$"); // TODO: change names
 	private static final Pattern endPattern = Pattern.compile("^==========$"); // TODO: change names
 
 	private String fileName;
@@ -65,5 +68,26 @@ public class FileParser {
 		}
 
 		return patterns;
+	}
+	
+	public void savePixelsToFile(String letter, List<Pixel> pixels) {
+		List<Integer> intPixels = pixels.stream().map(pixel -> pixel.isSelected()).collect(Collectors.toList());
+
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+			writer.newLine();
+			writer.write(letter);
+			for(int index = 0; index < intPixels.size(); index++) {
+				if(index % Pixel.PIXELS_DIMENTION == 0) {
+					writer.newLine();
+				}
+				writer.write(Integer.toString(intPixels.get(index)));
+			}
+			writer.newLine();
+			writer.write("==========");
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
