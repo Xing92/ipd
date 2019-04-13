@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
 public class Pixel {
 
 	public static final int PIXEL_SIZE = 10;
-	public static final int PIXELS_DIMENTION = 6;
+	public static final int PIXELS_DIMENTION = 16;
 	public static final int PIXEL_OFFSET_X = 150;
 	public static final int PIXEL_OFFSET_Y = 150;
 

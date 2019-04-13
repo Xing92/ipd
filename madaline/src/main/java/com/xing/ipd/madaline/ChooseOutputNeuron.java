@@ -13,7 +13,7 @@ public class ChooseOutputNeuron {
 	}
 
 	public String getOutputSign() {
-		Neuron chosenNeuron = inputs.get("X");
+		Neuron chosenNeuron = inputs.entrySet().stream().findAny().get().getValue();
 		String chosenSign = null;
 		for (Entry<String, Neuron> input : inputs.entrySet()) {
 			String sign = input.getKey();

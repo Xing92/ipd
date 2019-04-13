@@ -21,8 +21,8 @@ public class DrawingHelper {
 	}
 
 	private boolean isInsideRange(Pixel pixel, double mouseX, double mouseY) {
-		if (mouseX > pixel.getX() && mouseX < pixel.getX() + pixel.getSizeX() && mouseY > pixel.getY()
-				&& mouseY < pixel.getY() + pixel.getSizeY()) {
+		if (mouseX >= pixel.getX() && mouseX <= pixel.getX() + pixel.getSizeX() && mouseY >= pixel.getY()
+				&& mouseY <= pixel.getY() + pixel.getSizeY()) {
 			return true;
 		}
 		return false;

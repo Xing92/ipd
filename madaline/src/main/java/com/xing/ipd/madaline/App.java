@@ -30,10 +30,10 @@ public class App extends Application {
 	private TextField letterField;
 	private DrawingHelper drawingHelper;
 
-	private static final String patternFile = "C:\\Pawel\\git\\ipd\\madaline\\patterns.txt";
-//	private static final String patternFile = "C:\\Pawel\\git\\ipd\\madaline\\outputs.txt";
+//	private static final String patternFile = "C:\\Pawel\\git\\ipd\\madaline\\patterns.txt";
+	private static final String patternFile = "C:\\Pawel\\git\\ipd\\madaline\\outputsNEW.txt";
 	private static final String testFile = "C:\\Pawel\\git\\ipd\\madaline\\tests.txt";
-	private static final String outputFile = "C:\\Pawel\\git\\ipd\\madaline\\outputs.txt";
+	private static final String outputFile = "C:\\Pawel\\git\\ipd\\madaline\\outputsNEW.txt";
 
 	public static void main(String[] args) {
 		launch();
@@ -85,7 +85,7 @@ public class App extends Application {
 	private EventHandler createDrawPixelOnMousePressListener() {
 		return e -> {
 			MouseEvent me = (MouseEvent) e;
-			System.out.println(me.getX());
+//			System.out.println(me.getX());
 			Pixel pixel = drawingHelper.getPixelFromMouse(me.getX(), me.getY());
 			if (pixel != null) {
 				pixel.setSelected(1);
