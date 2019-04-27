@@ -14,12 +14,13 @@ public class Neuron {
 		this.sign = sign;
 		int numberOfOnes = weights.stream().filter(weight -> weight == 1).collect(Collectors.toList()).size();
 		weights.stream().forEach(weight -> {
-			this.weights.add(weight / Math.sqrt((double)numberOfOnes)); // Question : should I do Math.sqrt() there?
+			this.weights.add(weight / Math.sqrt((double) numberOfOnes)); // Question : should I do Math.sqrt() there?
 		});
 	}
 
 	public void setInputs(List<Integer> inputs) {
-		this.inputs = inputs.stream().map(v -> (double) v).collect(Collectors.toList());
+		int numberOfOnes = inputs.stream().filter(input -> input == 1).collect(Collectors.toList()).size();
+		this.inputs = inputs.stream().map(v -> (double) v / Math.sqrt(numberOfOnes)).collect(Collectors.toList());
 	}
 
 	public double calculateOutput() {
@@ -29,7 +30,7 @@ public class Neuron {
 		}
 		return sum;
 	}
-	
+
 	public String getSign() {
 		return sign;
 	}
