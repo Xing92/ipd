@@ -7,12 +7,12 @@ public class Gene {
 
 	private static final double start = 0.5;
 	private static final double finish = 2.5;
-	private static final double v211 = 2047;
+	private static final double v2_11 = 2047;
 
 	private static int idCounter = 1;
 	private int id;
 	private boolean[] chromosomes = new boolean[11]; // 2^10 < x < 2^11
-	private static Random rand = new Random(/* 10 */);
+	private static Random rand = new Random(10);
 
 	public Gene() {
 		id = idCounter;
@@ -25,7 +25,9 @@ public class Gene {
 	public Gene(boolean[] chromosomes) {
 		id = idCounter;
 		idCounter++;
-		this.chromosomes = chromosomes;
+		for(int i=0; i<chromosomes.length; i++) {
+			this.chromosomes[i] = chromosomes[i];
+		}
 	}
 
 	public double getValue() {
@@ -37,7 +39,7 @@ public class Gene {
 			}
 			power++;
 		}
-		result = start + (finish - start) * result / v211;
+		result = start + (finish - start) * result / v2_11;
 		return result;
 	}
 
@@ -64,6 +66,10 @@ public class Gene {
 
 	public Gene clone() {
 		return new Gene(chromosomes);
+	}
+
+	public int getId() {
+		return id;
 	}
 
 }

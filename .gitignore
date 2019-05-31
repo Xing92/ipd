@@ -8,3 +8,9 @@ madaline/.project
 madaline/.settings/
 madaline/target/
 
+genetic/.classpath/
+genetic/.project/
+genetic/.settings/
+genetic/target/
+genetic/test-output/
+

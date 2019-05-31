@@ -1,6 +1,5 @@
 package com.xing.ipd.genetic;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Application;
@@ -36,7 +35,6 @@ public class App extends Application {
 
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
-		gl = new GeneticLogic(300);
 		launch();
 		System.out.println("Goodbye World!");
 	}
@@ -60,6 +58,9 @@ public class App extends Application {
 		root.getChildren().add(lineY);
 
 		drawFunction();
+		gl = new GeneticLogic(20);
+		genes = gl.getGenes();
+		drawGenes();
 
 		stage.setScene(scene);
 		stage.setTitle("XING - Genetic Algorithm");
@@ -71,18 +72,22 @@ public class App extends Application {
 	private EventHandler createNextGenerationListener() {
 		return ae -> {
 
-			for (int i = 0; i < 1; i++) {
+			for (int i = 0; i < 1_000; i++) {
 				genePoints.getChildren().clear();
 				genes = gl.generateNewPopulation();
 				generationNumberTextField.setText("Generation number: " + gl.getGenerationNumber());
-				for (Gene gene : genes) {
-					Point point = new Point(gene.getValue(), gene.evalueateGene());
-					point.setColor(Color.BLUE);
-					point.setSize(5);
-					genePoints.getChildren().add(point.getCircle());
-				}
+				drawGenes();
 			}
 		};
+	}
+	
+	private void drawGenes() {
+		for (Gene gene : genes) {
+			Point point = new Point(gene.getValue(), gene.evalueateGene());
+			point.setColor(Color.BLUE);
+			point.setSize(5);
+			genePoints.getChildren().add(point.getCircle());
+		}
 	}
 
 	private void drawFunction() { // f(x) = (e^x * sin(10*pi*x) + 1) / x

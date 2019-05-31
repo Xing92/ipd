@@ -11,7 +11,7 @@ public class GeneticLogic {
 
 	private static int generationNumber = 0;
 	private int populationSize;
-	private double crossoverRate = 0.10;
+	private double crossoverRate = 0.15;
 	private double mutationRate = 0.005;
 	private List<Gene> genes = new ArrayList();
 	private Gene bestGene;
@@ -35,18 +35,11 @@ public class GeneticLogic {
 
 	public List<Gene> generateNewPopulation() {
 		generationNumber++;
-		System.out.println("START");
-		System.out.println(genes);
 		List<Double> roulette = generateRoulette(genes);
-		List<Gene> newGenes = rouletteGenes(roulette);
-		System.out.println(newGenes);
-		List<Gene> crossoverGenes = crossoverGenes(newGenes);
-		System.out.println(crossoverGenes);
+		List<Gene> rouletteGenes = rouletteGenes(roulette);
+		List<Gene> crossoverGenes = crossoverGenes(rouletteGenes);
 		List<Gene> mutatedGenes = mutateGenes(crossoverGenes);
 		genes = mutatedGenes;
-		System.out.println(genes);
-		System.out.println("FINISH");
-		System.out.println("X=" + findBestGene(genes).getValue() + ", Y=" + findBestGene(genes).evalueateGene());
 		return genes;
 	}
 
@@ -62,32 +55,44 @@ public class GeneticLogic {
 	}
 
 	private List<Double> generateRoulette(List<Gene> genes) {
-		double min = genes.stream().mapToDouble(gene -> gene.evalueateGene()).min().getAsDouble();
-		double totalFit = genes.stream().mapToDouble(gene -> gene.evalueateGene(min)).sum();
-		if (totalFit == 0) {
-			totalFit = genes.stream().mapToDouble(gene -> gene.evalueateGene(min - 1)).sum();
-		}
-
 		List<Double> roulette = new ArrayList();
+		double min = genes.stream().mapToDouble(gene -> gene.evalueateGene()).min().getAsDouble() - 0.01;
+		double totalFit = genes.stream().mapToDouble(gene -> gene.evalueateGene(min)).sum();
+
 		double previous = 0;
-		System.out.println("====");
 		for (Gene gene : genes) {
-			if(totalFit == 0) {
-				System.err.println("GRRRRR!");
-			}
 			roulette.add((previous + gene.evalueateGene(min)) / totalFit);
 			previous += gene.evalueateGene(min);
 		}
-		System.out.println(roulette);
-		System.out.println("Total fitness = " + totalFit);
 		return roulette;
+	}
+
+	private List<Gene> rouletteGenes(List<Double> roulette) {
+		List<Gene> newGenes = new ArrayList();
+		for (int i = 0; i < genes.size(); i++) {
+			newGenes.add(rouletteOneGene(roulette));
+		}
+		return newGenes;
+	}
+
+	private Gene rouletteOneGene(List<Double> roulette) { // TODO There is an issue
+		Gene gene = genes.get(0);
+		double random = rand.nextDouble();
+		for (int i = 0; i < roulette.size(); i++) {
+			double previous = 0;
+			if (i != 0) {
+				previous = roulette.get(i - 1);
+			}
+			if (roulette.get(i) >= random && random >= previous) {
+				gene = genes.get(i).clone();
+			}
+		}
+		return gene;
 	}
 
 	private List<Gene> mutateGenes(List<Gene> genes) {
 		List<Gene> mutatedGenes = new ArrayList();
 		for (Gene gene : genes) {
-			if (gene == null)
-				System.out.println(genes);
 			gene = gene.clone();
 			mutatedGenes.add(gene);
 			for (int i = 0; i < gene.getChromosomes().length; i++) {
@@ -104,15 +109,10 @@ public class GeneticLogic {
 		for (Gene gene : genes) {
 			if (rand.nextDouble() < crossoverRate) {
 				Gene secondGene = genes.get(rand.nextInt(genes.size()));
-				if (gene == null)
-					System.out.println(genes);
 				gene = gene.clone();
-				secondGene = secondGene.clone();
 				int crossoverPoint = rand.nextInt(gene.getChromosomes().length);
 				for (int i = crossoverPoint; i < gene.getChromosomes().length; i++) {
-					boolean tempChromosome = gene.getChromosomes()[i];
 					gene.getChromosomes()[i] = secondGene.getChromosomes()[i];
-					secondGene.getChromosomes()[i] = tempChromosome;
 				}
 			}
 			crossoverGenes.add(gene);
@@ -120,36 +120,6 @@ public class GeneticLogic {
 		return crossoverGenes;
 	}
 
-	private List<Gene> rouletteGenes(List<Double> roulette) {
-		List<Gene> newGenes = new ArrayList();
-		for (int i = 0; i < genes.size(); i++) {
-			newGenes.add(rouletteOneGene(roulette));
-		}
-		return newGenes;
-	}
-
-	private Gene rouletteOneGene(List<Double> roulette) {
-		Gene gene = genes.get(0);
-		double random = rand.nextDouble();
-		for (int i = 0; i < roulette.size(); i++) {
-			double previous = 0;
-			if (i != 0) {
-				previous = roulette.get(i - 1);
-			}
-			if (roulette.get(i) >= random && random >= previous) {
-				gene = genes.get(i);
-			}
-		}
-		if (gene == null) {
-			// System.out.println("Gene is null. Debug:===");
-			// System.out.println(genes);
-			// System.out.println(random);
-			// System.out.println(roulette);
-			// System.out.println("Debug End:============");
-		}
-		return gene;
-	}
-	
 	public int getGenerationNumber() {
 		return generationNumber;
 	}

@@ -27,7 +27,7 @@ public class Point {
 		circle.setScaleX(size);
 		circle.setScaleY(size);
 	}
-	
+
 	public void setColor(Color color) {
 		circle.setFill(color);
 	}
