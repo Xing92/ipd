@@ -22,11 +22,13 @@ public class App extends Application {
 	public static final double SCREEN_HEIGHT = 450;
 	public static final double SCREEN_WIDTH = 700;
 	public static final double AXIS_Y_SIZE = 13;
-	public static final double AXIS_X_SIZE = 4;
+	public static final double AXIS_X_SIZE = 3;
 	Group root;
 	Scene scene;
 	Button nextGenerationButton;
 	Label generationNumberTextField;
+	Label meanValueTextField;
+	Label bestGeneTextField;
 
 	static GeneticLogic gl;
 	Group genePoints = new Group();
@@ -49,7 +51,18 @@ public class App extends Application {
 		root.getChildren().add(nextGenerationButton);
 		generationNumberTextField = new Label("Generation number: 0");
 		generationNumberTextField.setLayoutY(30);
+
+		meanValueTextField = new Label("Mean fitness: 0");
+		meanValueTextField.setLayoutY(30);
+		meanValueTextField.setLayoutX(180);
+
+		bestGeneTextField = new Label("Best gene fit: 0, X: 0");
+		bestGeneTextField.setLayoutY(0);
+		bestGeneTextField.setLayoutX(180);
+
 		root.getChildren().add(generationNumberTextField);
+		root.getChildren().add(meanValueTextField);
+		root.getChildren().add(bestGeneTextField);
 
 		Line lineX = new Line(0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
 		root.getChildren().add(lineX);
@@ -72,15 +85,18 @@ public class App extends Application {
 	private EventHandler createNextGenerationListener() {
 		return ae -> {
 
-			for (int i = 0; i < 1_000; i++) {
+			for (int i = 0; i < 1000; i++) {
 				genePoints.getChildren().clear();
 				genes = gl.generateNewPopulation();
 				generationNumberTextField.setText("Generation number: " + gl.getGenerationNumber());
+				bestGeneTextField.setText(String.format("Best gene fitness:%.3f, X:%.3f",
+						gl.findBestGene().evalueateGene(), gl.findBestGene().getValue()));
+				meanValueTextField.setText(String.format("Mean fitness: %.3f", gl.getMeanFitness()));
 				drawGenes();
 			}
 		};
 	}
-	
+
 	private void drawGenes() {
 		for (Gene gene : genes) {
 			Point point = new Point(gene.getValue(), gene.evalueateGene());

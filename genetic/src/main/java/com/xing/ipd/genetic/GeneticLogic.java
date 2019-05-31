@@ -11,8 +11,8 @@ public class GeneticLogic {
 
 	private static int generationNumber = 0;
 	private int populationSize;
-	private double crossoverRate = 0.15;
-	private double mutationRate = 0.005;
+	private double crossoverRate = 0.25;
+	private double mutationRate = 0.01;
 	private List<Gene> genes = new ArrayList();
 	private Gene bestGene;
 	Random rand;
@@ -43,7 +43,7 @@ public class GeneticLogic {
 		return genes;
 	}
 
-	private Gene findBestGene(List<Gene> genes) {
+	public Gene findBestGene() {
 		Gene bestGene = null;
 		bestGene = genes.get(0);
 		for (Gene gene : genes) {
@@ -122,6 +122,16 @@ public class GeneticLogic {
 
 	public int getGenerationNumber() {
 		return generationNumber;
+	}
+
+	public double getMeanFitness() {
+		double meanFitness = 0;
+		double sumFitness = 0;
+		for (Gene gene : genes) {
+			sumFitness += gene.evalueateGene();
+		}
+		meanFitness = sumFitness / genes.size();
+		return meanFitness;
 	}
 
 }
